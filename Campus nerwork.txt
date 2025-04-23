@@ -1,5 +1,104 @@
+mo ta chung
+mo hinh nay mo ta thiet ke trien khai mang khuôn viên trường học, bao gồm các tòa nhà và nhiều phòng ban khác nhau với các thiết bị kết nối cần thiết.
+máy chủ email dc lưu trữ trên cloud và kết nối với mạng
+mô tả các thiết bị đầu cuối o cac phòng ban
+
+//ket noi cac router (bo dinh tuyen) qua serial
+//cau hinh router
+en
+conf t
+hostname ...
+int se (fa/gi) 
+ip add //cau hinh ip address cho router
+no sh
+ex
+do wr
+
+//cau truc mang switch 2 lop và số lượng phân chia, kết nối các thiết bị trong mạng nhánh và phân biệt mạng nhánh với mạng chính
+
+//cau hinh vlan (virtual lan)
 int range fa0/1-24
 switchport mode access
-switchport access vlan 60
+switchport access vlan 90
 do wr
 exit
+
+
+//cau hinh lien ket cac vlan den router
+chung ta se phan vung cac vlan 10-100, sau do cau hinh theo dia chi ip ma chung ta set up, sau khi lien ket cac router thi ta se ket noi cac vlan den router thong qua switch  
+
+//cấu hình switch, thiết lập trunk và encapsulation
+//trunk là kết nối các thiết bị trong LAN qua các kết nối dây
+encapsulation la dong goi, tuy nhien trong version mới của CPT thì ISL ko còn hỗ trợ trunk thủ công nữa mà tự động 
+
+(mặc dinh duoc trunk sẵn)
+//cau hinh switch cho phep vlan truy cap router
+int gig1/0/1
+//switchport trunk encapsulation dotlq
+switchport mode trunk
+do wr
+exit
+
+//cấu hình máy chủ DHCP de cap phat dịa chỉ IP động cho các thiết bị phòng ban thông qua các nhóm ip address
+
+//cau hinh ip address vao vlan
+int g0/0.10 (-0.100)
+encapsulation dot1q 10 (-100)
+ip add 192.168.1.1
+ex
+do wr
+
+//cau hinh dhcp,dns dynamic ip add
+service dhcp
+ip dhcp pool admin-pool //admin la ten cua cac phong ban
+network 192.168.6.0 255.255.255.0
+default-router 192.168.6.1
+dns-server 192.168.6.1
+ex
+do wr
+
+//kiem tra cac cau hinh tren router
+show ip route
+show ip dhcp binding
+show ip dhcp pool
+show ip int brief
+show ip int stat
+
+//kiem tra cac vlan tren switch
+show vlan brief
+//cau hinh giai thuat RIP
+router rip
+version 2
+network 10.10.10.0 
+network 10.10.10.4
+network 10.10.10.8
+network 192.168.1.0
+...
+network 192.168.10.0
+
+//cau hinh firewall asa modell
+en
+
+conf t
+int g1/1
+ip add 
+nameif INSIDE
+security-level 100
+ex
+dhcpd add 192.168.1.10-192.168.1.100 in
+dhcpd dns 192.168.1.1
+dhcpd enable inside
+no shut
+ex
+wr me
+
+
+//cau hinh password
+
+
+
+//cau hinh telnet
+
+
+
+
